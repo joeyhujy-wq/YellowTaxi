@@ -20,7 +20,7 @@ print("=" * 60)
 print("1. 数据加载")
 print("=" * 60)
 
-df = pd.read_parquet('yellow_tripdata_2023-01.parquet')
+df = pd.read_parquet('data/yellow_tripdata_2023-01.parquet')
 print(f"原始数据维度: {df.shape[0]} 行 × {df.shape[1]} 列")
 print(f"\n字段列表:\n{df.dtypes}")
 
@@ -267,7 +267,7 @@ print(df[['pickup_hour', 'pickup_weekday', 'is_rush_hour',
 # ============================================================
 # 6. 保存清洗后的数据（可选）
 # ============================================================
-output_file = 'yellow_tripdata_2023-01_cleaned.parquet'
+output_file = 'data/yellow_tripdata_2023-01_cleaned.parquet'
 df.to_parquet(output_file, index=False)
 print(f"\n清洗与特征工程后的数据已保存: {output_file}")
 print(f"最终数据维度: {df.shape[0]} 行 × {df.shape[1]} 列")

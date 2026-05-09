@@ -1,2 +1,6 @@
 # Parquet data files
 *.parquet
+
+# Python cache
+__pycache__/
+*.pyc
