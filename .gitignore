@@ -1,5 +1,8 @@
-# Parquet data files
-*.parquet
+# Large cleaned parquet file (exceeds GitHub 100MB limit)
+data/yellow_tripdata_2023-01_cleaned.parquet
+
+# Parquet data files in root directory only
+/*.parquet
 
 # Python cache
 __pycache__/
