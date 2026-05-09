@@ -14,16 +14,17 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-from matplotlib import rcParams
+from matplotlib import font_manager
 
 # ============================================================
-# 初始化设置
+# 初始化设置：显式注册中文字体
 # ============================================================
 OUTPUT_DIR = 'outputs'
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-# 设置中文字体（Windows 优先尝试微软雅黑，降级到 SimHei）
-plt.rcParams['font.sans-serif'] = ['Microsoft YaHei', 'SimHei', 'DejaVu Sans']
+font_path = r'C:\Windows\Fonts\msyh.ttc'
+font_manager.fontManager.addfont(font_path)
+plt.rcParams['font.family'] = 'Microsoft YaHei'
 plt.rcParams['axes.unicode_minus'] = False
 sns.set_style('whitegrid')
 
@@ -85,7 +86,8 @@ top10_pu = df['PULocationID'].value_counts().head(10).reset_index()
 top10_pu.columns = ['区域ID', '上车量']
 
 fig, ax = plt.subplots(figsize=(10, 5))
-sns.barplot(data=top10_pu, x='区域ID', y='上车量', palette='Blues_r', ax=ax, order=top10_pu['区域ID'])
+sns.barplot(data=top10_pu, x='区域ID', y='上车量', hue='区域ID',
+            palette='Blues_r', ax=ax, order=top10_pu['区域ID'], legend=False)
 ax.set_title('M2-2a: 上车量 TOP 10 区域', fontsize=14, fontweight='bold')
 ax.set_xlabel('区域 ID (PULocationID)', fontsize=12)
 ax.set_ylabel('上车订单量', fontsize=12)
@@ -100,7 +102,8 @@ top10_do = df['DOLocationID'].value_counts().head(10).reset_index()
 top10_do.columns = ['区域ID', '下车量']
 
 fig, ax = plt.subplots(figsize=(10, 5))
-sns.barplot(data=top10_do, x='区域ID', y='下车量', palette='Oranges_r', ax=ax, order=top10_do['区域ID'])
+sns.barplot(data=top10_do, x='区域ID', y='下车量', hue='区域ID',
+            palette='Oranges_r', ax=ax, order=top10_do['区域ID'], legend=False)
 ax.set_title('M2-2b: 下车量 TOP 10 区域', fontsize=14, fontweight='bold')
 ax.set_xlabel('区域 ID (DOLocationID)', fontsize=12)
 ax.set_ylabel('下车订单量', fontsize=12)
@@ -151,7 +154,8 @@ plt.close()
 fig, ax = plt.subplots(figsize=(8, 5))
 df_plot = df[df['total_amount'] <= 100].copy()  # 限制范围以便观察
 df_plot['时段类型'] = df_plot['is_rush_hour'].map({0: '非高峰', 1: '高峰'})
-sns.boxplot(data=df_plot, x='时段类型', y='total_amount', palette='Set2', ax=ax)
+sns.boxplot(data=df_plot, x='时段类型', y='total_amount', hue='时段类型',
+            palette='Set2', ax=ax, legend=False)
 ax.set_title('M2-3b: 高峰/非高峰时段的总金额分布', fontsize=14, fontweight='bold')
 ax.set_xlabel('时段类型', fontsize=12)
 ax.set_ylabel('总金额 ($)', fontsize=12)
@@ -162,7 +166,8 @@ plt.close()
 # 乘客人数 vs 车费（小提琴图）
 fig, ax = plt.subplots(figsize=(9, 5))
 df_pass = df[(df['passenger_count'] <= 6) & (df['total_amount'] <= 100)].copy()
-sns.violinplot(data=df_pass, x='passenger_count', y='total_amount', palette='muted', ax=ax, inner='quartile')
+sns.violinplot(data=df_pass, x='passenger_count', y='total_amount',
+               hue='passenger_count', palette='muted', ax=ax, inner='quartile', legend=False)
 ax.set_title('M2-3c: 乘客人数 vs 总金额分布', fontsize=14, fontweight='bold')
 ax.set_xlabel('乘客人数', fontsize=12)
 ax.set_ylabel('总金额 ($)', fontsize=12)
@@ -200,14 +205,16 @@ df_air['行程类型'] = df_air['is_airport_trip'].map({0: '市区普通', 1: '�
 
 # 左：平均速度对比（过滤极端值）
 speed_data = df_air[df_air['avg_speed_mph'].notna() & (df_air['avg_speed_mph'] <= 50)]
-sns.boxplot(data=speed_data, x='行程类型', y='avg_speed_mph', palette='coolwarm', ax=axes[0])
+sns.boxplot(data=speed_data, x='行程类型', y='avg_speed_mph', hue='行程类型',
+            palette='coolwarm', ax=axes[0], legend=False)
 axes[0].set_title('平均速度对比', fontsize=12, fontweight='bold')
 axes[0].set_ylabel('平均速度 (mph)')
 
 # 右：行程时长对比（分钟）
 df_air['trip_duration_min'] = (df_air['tpep_dropoff_datetime'] - df_air['tpep_pickup_datetime']).dt.total_seconds() / 60
 duration_data = df_air[df_air['trip_duration_min'] <= 120]  # 过滤极端长行程
-sns.boxplot(data=duration_data, x='行程类型', y='trip_duration_min', palette='coolwarm', ax=axes[1])
+sns.boxplot(data=duration_data, x='行程类型', y='trip_duration_min', hue='行程类型',
+            palette='coolwarm', ax=axes[1], legend=False)
 axes[1].set_title('行程时长对比', fontsize=12, fontweight='bold')
 axes[1].set_ylabel('行程时长 (分钟)')
 
